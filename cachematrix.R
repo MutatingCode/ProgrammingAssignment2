@@ -8,17 +8,22 @@
 ##    2. function to get the value of the vector
 ##    3. function to set the value of the inverse
 ##    4. function to get the value of the inverse
+##
+## Examples of how to call the makeCacheMatrix function
+## > makeCacheMatrix(matrix(c(1,2,3,5, 11,12,13,85,32), nrow = 3, ncol = 3))
+## > x<-matrix(c(1,2,3,5, 11,12,13,85,32), nrow = 3, ncol = 3)
+## > mCM <- makeCacheMatrix(x)
 
 makeCacheMatrix <- function(mx = matrix()) {
     inv_mx <- NULL
-    set <- function(y) {
-      mx <<- y
-      inv_mx <<- NULL
+    set <- function(y) {  	
+      mx <<- y				## calling mCM$set(some_matrix) gives our matrix it's value
+      inv_mx <<- NULL		## and sets inverse matrix to NULL
     }
-    get <- function() mx
-    setinverse <- function(solve) inv_mx <<- solve
-    getinverse <- function() inv_mx
-    list(set = set, 
+    get <- function() mx	## calling mCM$get() returns the matrix 
+    setinverse <- function(solve) inv_mx <<- solve   ## calling mCM$setinverse(inve) makes  inve our inverted matrix 
+    getinverse <- function() inv_mx 	## calling mCM$getinverse() returns the inverted matrix
+    list(set = set, 					## returned list of function
 	     get = get,
          setinverse = setinverse,
          getinverse = getinverse)
@@ -44,13 +49,18 @@ makeCacheMatrix <- function(mx = matrix()) {
 ## for the mt matrix.
 
 cacheSolve <- function(mx, ...) {
-  inv_mx <- mx$getinverse()
-  if(!is.null(inv_mx)) {
+  inv_mx <- mx$getinverse()				## getting inverse matrix from cache
+  if(!is.null(inv_mx)) {				## if there is an inverse matrix, function will return it
     message("Getting inverse matrix from cache")
-    return(inv_mx)
+    return(inv_mx)						## function returns cached matrix and exits
   }
-  data <- mx$get()
-  inv_mx <- solve(data, ...)
-  mx$setinverse(inv_mx)
-  inv_mx
+  data <- mx$get()						## if there was no cached inverse matrix, data contains original matrix
+  inv_mx <- solve(data, ...)			## inv_mix contains the inverted matrix
+  mx$setinverse(inv_mx)					## setting inv_mx as value of unversed matrix
+  inv_mx								## function returns inverse matrix
 }
+## Examples of how to call the cacheSolve function
+## Remember to call makeCacheMatrix first!
+## > mx<-makeCacheMatrix(matrix(c(1,2,3,5, 11,12,13,85,32), nrow = 3, ncol = 3))
+## > xm<-cacheSolve(mx)
+
